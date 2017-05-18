@@ -8,10 +8,11 @@
 #include "external_deque.h"
 #include <time.h>
 #include <map>
+#include "util.h"
 using std::rand;
 using std::string;
 using std::cout;
-string root = "./";
+string root = "/home/ouroboros/tmp";
 const size_t size_equals = 1000, size = 10000;
 const int fill_by = 0;
 
@@ -45,8 +46,9 @@ void test_correctness() {
     auto it_simple = simple_deque.begin();
     auto it_dumb = dumb_deque.begin();
     auto it_ext = ext_deque.begin();
-
+	
     for (auto it_native = native_deque.begin(); it_native != native_deque.end(); ++it_native, ++it_simple, ++it_dumb, ++it_ext) {
+	
         assert(*it_native == *it_simple);
         assert(*it_native == *it_dumb);
         assert(*it_native == *it_ext);
@@ -92,7 +94,8 @@ void test_one(T& deq) {
     prev = clock();
     cout << "Iterating\n";
     int tmp;
-    for (auto it = deq.begin(); it != deq.end(); ++it) {
+	auto end = deq.end();
+    for (auto it = deq.begin(); it != end; ++it) {
         tmp = *it;
     }
 
@@ -146,7 +149,6 @@ void test_performance() {
 
 
 int main() {
-
     test_correctness();
     test_performance();
 }

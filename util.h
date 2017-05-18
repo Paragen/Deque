@@ -34,7 +34,7 @@ array<byte, sizeof(T)> to_bytes(const T &object) {
 
 template<class T>
 T &from_bytes(const array<byte, sizeof(T)> &data, T &object) {
-    static_assert(std::is_trivially_copyable<T>::value, "unacceptable type");
+    //static_assert(std::is_trivially_copyable<T>::value, "unacceptable type");
 
     std::copy(data.begin(), data.end(), reinterpret_cast<byte *>(std::addressof(object)));
 
@@ -42,13 +42,13 @@ T &from_bytes(const array<byte, sizeof(T)> &data, T &object) {
 }
 
 template<class T>
-T get_from_file(const string &file_name, unsigned long shift) {
+T get_from_file(const string &file_name, size_t shift) {
     std::ifstream fin(file_name, std::ios::binary);
     fin.seekg(shift * sizeof(T), std::ios::beg);
 
     std::array<byte, sizeof(T)> data;
     fin.read(data.data(), sizeof(T));
-
+	fin.close();
     //default constructor
     T tmp;
 
@@ -58,9 +58,19 @@ T get_from_file(const string &file_name, unsigned long shift) {
 template<class T>
 void add_to_file_end(const string &file_name, const T &object) {
     auto data = to_bytes(object);
+	
     std::ofstream fout(file_name, std::ios::out | std::ios::app);
     fout.write(data.data(), data.size());
     fout.close();
+}
+
+template<class T>
+size_t get_file_length(const string &file_name) {
+    std::ifstream fin(file_name, std::ios::binary | std::ios::ate);
+    std::streamsize size = fin.tellg();
+	fin.close();
+	size_t sz = size / sizeof(T);
+	return sz;
 }
 
 std::vector<byte> load_raw_block(const string &file_name) {
@@ -109,6 +119,7 @@ void save_block(const string& file_name, const std::vector<T>& data) {
 
     std::ofstream fout(file_name, std::ios::out);
     fout.write(raw_data.data(), raw_data.size());
+    fout.close();
 
 }
 

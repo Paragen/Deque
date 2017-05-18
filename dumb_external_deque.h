@@ -14,10 +14,10 @@ using std::string;
 
 template <class T>
 class dumb_external_deque {
-    static constexpr unsigned block_size = 8 * 1024 * 1024 / sizeof(T);
+    static constexpr size_t block_size = 2 * 1024 * 1024 / sizeof(T);
     const string prefix;
     static const string delimiter;
-    unsigned left_size = 0, right_size = 0, left_edge = 0, right_edge;
+    size_t left_size = 0, right_size = 0, left_edge = 0, right_edge = 0;
     mpz_class data_size;
 
 
@@ -44,16 +44,19 @@ public:
 
 template <class T>
 class dumb_external_deque<T>::iterator {
-    unsigned shift, block_num;
+    size_t shift, block_num, block_size;
     const string prefix;
 public:
 
-    iterator(unsigned block_num, unsigned shift, const string& prefix):block_num(block_num),shift(shift),prefix(prefix){}
+    iterator(size_t block_num, size_t shift, const string& prefix):block_num(block_num),shift(shift),prefix(prefix){
+	block_size = get_file_length<T>(prefix + std::to_string(block_num));
+}
 
     iterator& operator++() {
         if (block_size <= shift + 1) {
             shift = 0;
             ++block_num;
+	    block_size = get_file_length<T>(prefix + std::to_string(block_num));
         } else {
             ++shift;
         }
@@ -62,8 +65,9 @@ public:
 
     iterator& operator--() {
         if (shift <= 0) {
-            shift = block_size - 1;
             --block_num;
+	    block_size = get_file_length<T>(prefix + std::to_string(block_num));
+	    shift = block_size - 1;
         } else {
             --shift;
         }
@@ -168,7 +172,7 @@ typename dumb_external_deque<T>::iterator dumb_external_deque<T>::begin() {
 
 template <class T>
 typename dumb_external_deque<T>::iterator dumb_external_deque<T>::end() {
-    return dumb_external_deque<T>::iterator(right_edge, right_size, prefix + delimiter);
+    return dumb_external_deque<T>::iterator(right_edge+1, 0, prefix + delimiter);
 }
 
 template <class T>
