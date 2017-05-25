@@ -48,7 +48,7 @@ void test_correctness() {
     auto it_ext = ext_deque.begin();
 	
     for (auto it_native = native_deque.begin(); it_native != native_deque.end(); ++it_native, ++it_simple, ++it_dumb, ++it_ext) {
-	
+
         assert(*it_native == *it_simple);
         assert(*it_native == *it_dumb);
         assert(*it_native == *it_ext);
@@ -149,6 +149,16 @@ void test_performance() {
 
 
 int main() {
+    dumb_external_deque<int> d1(root);
+    d1.push_back(1);
+    d1.push_back(2);
+    d1.push_back(3);
+    auto it = d1.begin();
+    cout << *it;
+    ++it;
+    cout << *it;
+    ++it;
+    cout << *it;
     test_correctness();
     test_performance();
 }

@@ -48,6 +48,7 @@ T get_from_file(const string &file_name, size_t shift) {
 
     std::array<byte, sizeof(T)> data;
     fin.read(data.data(), sizeof(T));
+        //throw std::runtime_error("Can't read from file " + file_name);
 	fin.close();
     //default constructor
     T tmp;
@@ -80,7 +81,8 @@ std::vector<byte> load_raw_block(const string &file_name) {
     std::vector<byte> vec;
     if (size > 0) {
         vec.resize(size);
-        assert(fin.read((char *) vec.data(), size));
+        fin.read((char *) vec.data(), size);
+            //throw std::runtime_error("Can't read from file " + file_name );
     }
     fin.close();
 
