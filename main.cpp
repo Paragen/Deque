@@ -13,7 +13,7 @@ using std::rand;
 using std::string;
 using std::cout;
 string root = "/home/ouroboros/tmp";
-const size_t size_equals = 1000, size = 10000;
+const size_t size_equals = 1000, size = 300000000;
 const int fill_by = 0;
 
 void test_correctness() {
@@ -126,17 +126,17 @@ void test_performance() {
     cout << "------- Performance --------\n";
     cout << "Data size: " << (float) (2 * size * sizeof(int) / (1024 * 1024)) << " mb\n";
 
-    deque<int> simple_deque;
+    std::deque<int> simple_deque;
     dumb_external_deque<int> dumb_deque(root);
     external_deque<int> ext_deque(root);
 
     cout << "Testing usual deque\n";
     test_one(simple_deque);
 
-    cout << "------------------------\n";
+    /*cout << "------------------------\n";
 
     cout << "Testing naive realisation of external deque deque\n";
-    test_one(dumb_deque);
+    test_one(dumb_deque);*/
 
     cout << "------------------------\n";
 

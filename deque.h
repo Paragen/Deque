@@ -16,7 +16,7 @@ class deque {
     size_t data_size = 0, capacity;
     size_t head, tail;
     std::unique_ptr<T,  void(&)(T*)> data;
-
+    const size_t max_size = (unsigned)(-1); 
     void set_and_copy(size_t new_size);
     void ensure_capacity();
 
@@ -129,7 +129,13 @@ void deque<T>::set_and_copy(size_t new_capacity) {
 template <class T>
 void deque<T>::ensure_capacity() {
     if (data_size >= capacity - 1) {
+	assert(capacity != max_size);	
+	if (capacity > max_size >> 1) {
+		capacity = max_size;
+	} 
+	//std::cout << capacity * 2 << std::endl;
         set_and_copy(capacity * 2);
+	//std::cout << "done" << std::endl;
     } else if (capacity >> 2 > data_size  && capacity > 2 * standard_capacity) {
         set_and_copy(capacity / 2);
     }
