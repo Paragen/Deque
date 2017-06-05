@@ -4,6 +4,7 @@
 #include <fstream>
 #include <vector>
 #include <assert.h>
+#include <sys/stat.h>
 
 #ifndef DEQUE_UTIL_H
 #define DEQUE_UTIL_H
@@ -67,17 +68,18 @@ void add_to_file_end(const string &file_name, const T &object) {
 
 template<class T>
 size_t get_file_length(const string &file_name) {
-    std::ifstream fin(file_name, std::ios::binary | std::ios::ate);
-    std::streamsize size = fin.tellg();
-	fin.close();
-	size_t sz = size / sizeof(T);
-	return sz;
+    struct stat filestatus;
+    stat( file_name.c_str(), &filestatus );
+	return filestatus.st_size / sizeof(T);
 }
 
 std::vector<byte> load_raw_block(const string &file_name) {
-    std::ifstream fin(file_name, std::ios::binary | std::ios::ate);
-    std::streamsize size = fin.tellg();
-    fin.seekg(0, std::ios::beg);
+    std::ifstream fin(file_name, std::ios::binary);
+    struct stat filestatus;
+    size_t size = 0;
+    if (stat( file_name.c_str(), &filestatus ) == 0 ) {
+        size = filestatus.st_size;
+    }
     std::vector<byte> vec;
     if (size > 0) {
         vec.resize(size);
